@@ -1,0 +1,173 @@
+version 16.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+!
+hostname GATEWAY
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name sshremote.lab
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+!
+!
+!
+!
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-3028137085
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3028137085
+ revocation-check none
+ rsakeypair TP-self-signed-3028137085
+!
+!
+crypto pki certificate chain TP-self-signed-3028137085
+!
+!
+license udi pid ISR4321/K9 sn FDO211603D6
+license boot suite FoundationSuiteK9
+license boot level securityk9
+no license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username Admin privilege 15 secret 5 $1$2LHO$ZZjn5fS9GZAQ0HANosnLo1
+!
+redundancy
+ mode none
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 200.200.10.5 255.255.255.255
+!
+interface GigabitEthernet0/0/0
+ ip address 192.168.1.1 255.255.255.252
+ negotiation auto
+!
+interface GigabitEthernet0/0/1
+ ip address 192.168.0.1 255.255.255.252
+ negotiation auto
+!
+interface Serial0/1/0
+ no ip address
+ shutdown
+!
+interface Serial0/1/1
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0
+ vrf forwarding Mgmt-intf
+ no ip address
+ shutdown
+ negotiation auto
+!
+!
+router eigrp 100
+ network 172.16.10.0 0.0.0.255
+ network 172.16.20.0 0.0.0.255
+ network 172.16.100.0 0.0.0.255
+ network 172.16.110.0 0.0.0.255
+ network 192.168.0.0 0.0.0.3
+ network 192.168.1.0 0.0.0.3
+ redistribute static
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip tftp source-interface GigabitEthernet0
+ip route 0.0.0.0 0.0.0.0 Loopback0
+!
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^CUTHORISED USERS ONLY
+^C
+!
+line con 0
+ transport input none
+ stopbits 1
+line aux 0
+ stopbits 1
+line vty 0 4
+ login local
+ transport input ssh
+!
+wsma agent exec
+!
+wsma agent config
+!
+wsma agent filesys
+!
+wsma agent notify
+!
+!
+end

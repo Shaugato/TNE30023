@@ -1,0 +1,340 @@
+version 15.0
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname ALS2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+clock timezone AEST 10 0
+clock summer-time AEDT recurring 1 Sun Oct 2:00 1 Sun Apr 3:00
+system mtu routing 1500
+vtp domain CISCO
+vtp mode transparent
+!
+!
+ip dhcp snooping vlan 10,20
+ip dhcp snooping
+no ip domain-lookup
+ip domain-name CCNP.NET
+!
+!
+crypto pki trustpoint TP-self-signed-313211008
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-313211008
+ revocation-check none
+ rsakeypair TP-self-signed-313211008
+!
+!
+crypto pki certificate chain TP-self-signed-313211008
+ certificate self-signed 01
+  30820229 30820192 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
+  30312E30 2C060355 04031325 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 33313332 31313030 38301E17 0D393330 33303130 30313630
+  315A170D 32303031 30313030 30303030 5A303031 2E302C06 03550403 1325494F
+  532D5365 6C662D53 69676E65 642D4365 72746966 69636174 652D3331 33323131
+  30303830 819F300D 06092A86 4886F70D 01010105 0003818D 00308189 02818100
+  E9137839 4BA67616 0BEDEA90 45DEC924 9EB25B37 EF0DECE0 C09A8095 CC3A9D50
+  853C3252 5B277572 CEB84D36 186C3B06 B4B302E4 4C2A8EEA 02CBB121 0091B6E5
+  E7069A2E B3F80F3B D607A5DC 935981F8 CBE6E6CA 69485744 1F060274 F67B5663
+  06AA6D98 180DD27C E8269933 13B4CB4F 621F3801 A8DD7F21 6B85A1F0 8881435F
+  02030100 01A35330 51300F06 03551D13 0101FF04 05300301 01FF301F 0603551D
+  23041830 168014A2 07FA6A6E 44BB61BE 52313E72 A40B4155 0BA6EC30 1D060355
+  1D0E0416 0414A207 FA6A6E44 BB61BE52 313E72A4 0B41550B A6EC300D 06092A86
+  4886F70D 01010505 00038181 00754C08 8E6A64E7 CF1CDD1F 6BE60E72 4DB11F3D
+  EFA0AAA2 BB382D6D 4232E288 37BCA592 54587429 E075D5DB FBFEE964 846874D5
+  2C7CAC59 48510134 EED6B4F7 AF6E107B 41A6E495 C4D9CCD2 ABEB6574 2776A820
+  6C24A006 9D0A741B 446D4E22 8AE364E2 5F7CD641 92146040 2CFE4BF6 5FB8F853
+  41C896BB 30EE6D0D A9E83C3D 7F
+        quit
+!
+!
+!
+!
+!
+!
+spanning-tree mode mst
+spanning-tree extend system-id
+!
+spanning-tree mst configuration
+ revision 1
+ instance 1 vlan 10, 20
+ instance 2 vlan 100, 110
+!
+!
+vlan internal allocation policy ascending
+!
+vlan 10
+ name Staff
+!
+vlan 20
+ name Students
+!
+vlan 100
+ name Management
+!
+vlan 110
+ name Voice
+!
+vlan 150
+ name Server_Farm
+!
+vlan 800
+ name Native
+!
+vlan 999
+ name Parking
+ state suspend
+!
+!
+!
+!
+!
+!
+interface Port-channel3
+ switchport trunk native vlan 800
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface Port-channel4
+ switchport access vlan 999
+ switchport trunk native vlan 800
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface FastEthernet0/1
+ switchport access vlan 999
+ switchport trunk native vlan 800
+ switchport mode trunk
+ switchport nonegotiate
+ udld port aggressive
+ channel-group 4 mode desirable
+ ip dhcp snooping limit rate 15
+ ip dhcp snooping trust
+!
+interface FastEthernet0/2
+ switchport access vlan 999
+ switchport trunk native vlan 800
+ switchport mode trunk
+ switchport nonegotiate
+ udld port aggressive
+ channel-group 4 mode desirable
+ ip dhcp snooping limit rate 15
+ ip dhcp snooping trust
+!
+interface FastEthernet0/3
+ switchport trunk native vlan 800
+ switchport mode trunk
+ switchport nonegotiate
+ udld port aggressive
+ channel-group 3 mode on
+ ip dhcp snooping limit rate 15
+ ip dhcp snooping trust
+!
+interface FastEthernet0/4
+ switchport trunk native vlan 800
+ switchport mode trunk
+ switchport nonegotiate
+ udld port aggressive
+ channel-group 3 mode on
+ ip dhcp snooping limit rate 15
+ ip dhcp snooping trust
+!
+interface FastEthernet0/5
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ udld port aggressive
+!
+interface FastEthernet0/6
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ udld port aggressive
+!
+interface FastEthernet0/7
+ switchport access vlan 20
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/8
+ switchport access vlan 20
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/9
+ switchport access vlan 20
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/10
+ switchport access vlan 20
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/11
+ switchport access vlan 20
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/12
+ switchport access vlan 20
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/13
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/14
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/15
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/16
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/17
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/18
+ switchport access vlan 10
+ switchport mode access
+ switchport port-security violation protect
+ switchport port-security mac-address 1234.1234.1234
+ switchport port-security
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/19
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/20
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/21
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/22
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/23
+ switchport access vlan 10
+ switchport mode access
+ shutdown
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/24
+ switchport access vlan 10
+ switchport mode access
+ udld port aggressive
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet0/1
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ udld port aggressive
+!
+interface GigabitEthernet0/2
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+ udld port aggressive
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan100
+ ip address 172.16.100.102 255.255.255.0
+!
+ip default-gateway 172.16.100.1
+ip http server
+ip http secure-server
+!
+!
+!
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+line vty 0 4
+ login
+line vty 5 15
+ login
+!
+ntp server 172.16.100.2
+end
